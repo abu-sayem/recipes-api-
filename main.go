@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -151,6 +152,28 @@ func DeleteRecipeHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"id": recipeID})
+}
+
+func SearchRecipeHandler(c *gin.Context){
+	tag := c.Query("tag")
+	listOfRecipes := make([]Recipe, 0)
+
+	for _, recipe := range recipes {
+		found := false
+
+		for _, item := range recipe.Tags {
+			if strings.EqualFold(item, tag) {
+				found = true
+				break
+			}
+		}
+
+		if found {
+			listOfRecipes = append(listOfRecipes, recipe)
+		}
+	}
+
+		c.JSON(http.StatusOK, listOfRecipes)
 }
 
 
